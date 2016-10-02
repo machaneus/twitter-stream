@@ -86,6 +86,8 @@ if __name__ == '__main__':
     response = twitter_grabber.getTweets(term)
     with open(filename,"w") as tweetsFile:
         for line in response:
+            if count>20000:
+                break
             tweet_json = line.strip()
             tweet = json.loads(tweet_json)
             try:
@@ -99,6 +101,9 @@ if __name__ == '__main__':
                             break
             except:
                 continue
+
+    f = open(term+"_completed",'w')
+    f.close()
 
 
 
