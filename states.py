@@ -1,3 +1,5 @@
+
+
 state_abbreviations = {
         'AK': 'Alaska',
         'AL': 'Alabama',
@@ -57,3 +59,12 @@ state_abbreviations = {
         'WV': 'West Virginia',
         'WY': 'Wyoming'
 }
+
+def getStateFromLocationString(location):
+    state = None
+    location_words = location.replace(',',' ').split(' ')
+    for word in location_words:
+        if word in state_abbreviations:
+            state = word
+            break
+    return state
