@@ -32,6 +32,19 @@ class TweetAnalyzer(object):
         else:
             raise NotImplemented
 
+        self.files = {}
+
+    def loadTweets(self, filename, fileDescriptor):
+        f = open(filename)
+        tweets = f.readlines()
+        f.close()
+
+        self.files[fileDescriptor] = tweets
+
+    def getTweets(self):
+        return self.files
+
+
     def getTweetNumberByState(self, filename):
         
         tweets_by_state = dict.fromkeys(state_abbreviations,0)
@@ -94,7 +107,9 @@ if __name__ == "__main__":
             state_scores[state]+=score'''
 
 
-            
+    tweetAnalyzer.loadTweets('tweets_trump_1000.txt','Trump')
+    tweetAnalyzer.loadTweets('tweets_clinton_1000.txt','Clinton')
+
 
     plt.bar(range(len(state_tweets)), state_tweets.values(), align='center')
     plt.xticks(range(len(state_tweets)), state_tweets.keys())
