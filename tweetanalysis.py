@@ -25,6 +25,26 @@ class AFINNSentimentAnalyzer(object):
                 score+=self.scores[word]
         return score
 
+class TweetAnalyzer(object):
+    def __init__(self, analyzerType = 'AFINN'):
+        if analyzerType == 'AFINN':
+            self.analyzer = AFINNSentimentAnalyzer('AFINN-111.txt')
+        else:
+            raise NotImplemented
+
+    def getTweetNumberByState(self, filename):
+        
+        tweets_by_state = dict.fromkeys(state_abbreviations,0)
+
+        with open(filename) as tweets:
+            for tweet_json in tweets:
+                tweet = json.loads(tweet_json)
+                tweet_location = tweet['user']['location']
+
+                state = getStateFromLocationString(tweet_location)
+                tweets_by_state[state]+=1
+
+        return tweets_by_state
 
 
 if __name__ == "__main__":
@@ -39,8 +59,10 @@ if __name__ == "__main__":
     scores_file = sys.argv[2]
 
     analyzer = AFINNSentimentAnalyzer(scores_file)
+    tweetAnalyzer = TweetAnalyzer()
+    state_tweets = tweetAnalyzer.getTweetNumberByState(tweets_file)
 
-    with open(tweets_file) as tweets:
+    '''with open(tweets_file) as tweets:
         for tweet in tweets.readlines():
             loc = json.loads(tweet)['user']['location']
             text = json.loads(tweet)['text']
@@ -49,12 +71,13 @@ if __name__ == "__main__":
             state_tweets[state]+=1
 
             score = analyzer.getTextSentiment(text)
-            state_scores[state]+=score
+            state_scores[state]+=score'''
+
 
             
 
-    plt.bar(range(len(state_scores)), state_scores.values(), align='center')
-    plt.xticks(range(len(state_scores)), state_scores.keys())
+    plt.bar(range(len(state_tweets)), state_tweets.values(), align='center')
+    plt.xticks(range(len(state_tweets)), state_tweets.keys())
 
     plt.show()
 
