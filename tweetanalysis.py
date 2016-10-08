@@ -46,6 +46,26 @@ class TweetAnalyzer(object):
 
         return tweets_by_state
 
+    def getTweetSentimentByState(self, filename):
+        
+        sentiment_by_state = dict.fromkeys(state_abbreviations,0)
+
+        with open(filename) as tweets:
+            for tweet_json in tweets:
+                tweet = json.loads(tweet_json)
+                tweet_location = tweet['user']['location']
+                tweet_text = tweet['text']
+
+                score = self.analyzer.getTextSentiment(tweet_text)
+
+                state = getStateFromLocationString(tweet_location)
+                sentiment_by_state[state]+=score
+
+        return sentiment_by_state
+
+
+
+
 
 if __name__ == "__main__":
     state_tweets = dict.fromkeys(state_abbreviations, 0)
@@ -60,8 +80,8 @@ if __name__ == "__main__":
 
     analyzer = AFINNSentimentAnalyzer(scores_file)
     tweetAnalyzer = TweetAnalyzer()
-    state_tweets = tweetAnalyzer.getTweetNumberByState(tweets_file)
-
+    state_tweets = tweetAnalyzer.getTweetSentimentByState(tweets_file)
+    
     '''with open(tweets_file) as tweets:
         for tweet in tweets.readlines():
             loc = json.loads(tweet)['user']['location']
