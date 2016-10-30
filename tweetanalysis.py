@@ -4,9 +4,12 @@ import matplotlib.pyplot as plt
 from states import state_abbreviations,getStateFromLocationString
 from SentimentAnalyzers import AFINNSentimentAnalyzer
 from TwitterTools import TweetAnalyzer
-
+import psycopg2
 
 if __name__ == "__main__":
+    conn = psycopg2.connect("dbname='twitter_sent_analysis' user='antonis' host='localhost' port='5433' password='123456'")
+    cur = conn.cursor()
+    
     state_tweets = dict.fromkeys(state_abbreviations, 0)
     state_scores = dict.fromkeys(state_abbreviations, 0)
 
@@ -35,6 +38,12 @@ if __name__ == "__main__":
 
     clinton_sentiment_state = tweetAnalyzer.getTweetSentimentByState('tweets_clinton_1000.txt')
     trump_sentiment_state = tweetAnalyzer.getTweetSentimentByState('tweets_trump_1000.txt')
+    
+"""    for key in state_abbreviations.keys():
+        cur.execute("UPDATE sentiment SET trump_sent=%d WHERE state='%s'" % (trump_sentiment_state[key],key))
+        cur.execute("UPDATE sentiment SET clinton_sent=%d WHERE state='%s'" % (clinton_sentiment_state[key],key))
+
+    conn.commit()"""
 
     tr_cl = dict([(key, trump_sentiment_state[key]-clinton_sentiment_state[key]) for key in trump_sentiment_state.keys()])
 
